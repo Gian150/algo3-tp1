@@ -1,7 +1,5 @@
 #include "numberPainter.hpp"
 
-#include <iostream>
-using namespace std;
 
 
 int main(){
@@ -15,10 +13,10 @@ int main(){
 		cin >> values[i];
 	}
 
-	NumberPainter* painter = new NumberPainter(n,values);
-	painter->paint_with(BACKTRACKING);
+	NumberPainter painter(n,values);
+	painter.paint_with(BACKTRACKING);
 
-	delete painter;
+	cout << painter << endl;
 
 	return 0;
 }

@@ -3,41 +3,71 @@
 NumberPainter::NumberPainter(int n, int* values){
 	this->n = n;
 	this->values = values;
-	this->colors = new int[n];
-	this->red_values_q = 0;
-	this->blue_values_q = 0;
 	this->colorless_values_q = 0;
 };
 
-
-NumberPainter::NumberPainter(NumberPainter& other){
-	// @TODO
+NumberPainter::~NumberPainter(){
 }
 
-void NumberPainter::paint_with(int algorithm_type){
-	if(algorithm_type == BACKTRACKING){
+
+NumberPainter::NumberPainter(const NumberPainter& other){
+	// @TODO
+}	
+
+void NumberPainter::paint_with(AlgorithmType a){
+	if(a == BACKTRACKING){
 		backtracking_solve();
-	} else if(algorithm_type == BACKTRACKING_WITH_BOUNDS){
+	} /*else if(algorithm_type == BACKTRACKING_WITH_BOUNDS){
 		backtracking_bounds_solve();
 	} else {
 		dynamic_solve();
-	}
+	}*/
 }
 
 void NumberPainter::backtracking_solve(){
-	// Pinto el primero de rojo, busco la mejor solución
-	int firstRed = backtracking(1, 0, -1, 0);
-	// Pinto el primero de azul, busco la mejor solución
-	int firstBlue = backtracking(1,-1, 1, 0);
-	// No pinto el primero, busco la mejor solución
-	int firstColorless = backtracking(1,-1,-1,1);
-
-	this->colorless_values_q = min(firstRed, firstBlue, firstColorless);
-
+	this->colorless_values_q = backtracking(0,-1,-1,0);//min(is_red, is_blue, is_colorless);
 }
 
+int NumberPainter::backtracking(int index, int lastRedIndex, int lastBlueIndex, int colorless_q){
+	if(index < this->n){
+		//cout << "index: " << index << ", lastRed: " << lastRedIndex << ", lastBlue: " << lastBlueIndex << ", colorlessValues: " << colorless_q  << endl;
+		int is_red = this->n;
+		int is_blue = this->n;
+		int is_colorless = backtracking(index+1, lastRedIndex, lastBlueIndex, colorless_q + 1);
+
+		if(lastRedIndex < 0 || this->values[index] < this->values[lastRedIndex]) 
+			is_red = backtracking(index+1, index, lastBlueIndex, colorless_q);
+		
+		if(lastBlueIndex < 0 || this->values[index] > this->values[lastBlueIndex]) 
+			is_blue = backtracking(index+1, lastRedIndex, index, colorless_q);
+		
+		//cout << is_red << " " << is_blue << " " << is_colorless << endl;
+		return min(is_red, is_blue, is_colorless);
+
+	} else {
+		return colorless_q;
+	}
+};
+
+int NumberPainter::get_colorless_q(){
+	return this->colorless_values_q;
+}
 
 int NumberPainter::min(int a,int b,int c){
 	int min = (a < b)? a : b;
 	return (min < c)? min : c;
 };
+
+std::ostream& operator<< (std::ostream& os, const NumberPainter& np) {
+	os << "======== NumberPainter ========" << endl;
+	os << "=         Quantity: "  << np.n << endl;
+	os << "=           Values: ";
+
+	for(int i = 0; i < np.n; i++) os << np.values[i] << " ";
+	os << endl;
+
+	os << "= Colorless Values: " << np.colorless_values_q << endl; 
+	os << "===============================";
+
+	return os;
+}
