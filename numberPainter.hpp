@@ -11,7 +11,10 @@ private:
 	int colorless_values_q;
 
 	int backtracking(int index, int lastRedIndex, int lastBlueIndex, int colorless_q);
+	int backtracking_bound();
+
 	void backtracking_solve();
+	void backtracking_bounds_solve();
 
 	int min(int a,int b,int c);
 

@@ -4,6 +4,7 @@ NumberPainter::NumberPainter(int n, int* values){
 	this->n = n;
 	this->values = values;
 	this->colorless_values_q = 0;
+	this->bd_partial_solution = n;
 };
 
 NumberPainter::~NumberPainter(){
@@ -17,9 +18,9 @@ NumberPainter::NumberPainter(const NumberPainter& other){
 void NumberPainter::paint_with(AlgorithmType a){
 	if(a == BACKTRACKING){
 		backtracking_solve();
-	} /*else if(algorithm_type == BACKTRACKING_WITH_BOUNDS){
+	} else if(a == BACKTRACKING_WITH_BOUNDS){
 		backtracking_bounds_solve();
-	} else {
+	} /*else {
 		dynamic_solve();
 	}*/
 }
@@ -29,8 +30,32 @@ void NumberPainter::backtracking_solve(){
 }
 
 int NumberPainter::backtracking(int index, int lastRedIndex, int lastBlueIndex, int colorless_q){
+	if(index < this->n && this->bd_partial_solution < colorless_q){
+		int is_red = this->n;
+		int is_blue = this->n;
+		int is_colorless = backtracking(index+1, lastRedIndex, lastBlueIndex, colorless_q + 1);
+
+		if(lastRedIndex < 0 || this->values[index] < this->values[lastRedIndex]) 
+			is_red = backtracking(index+1, index, lastBlueIndex, colorless_q);
+		
+		if(lastBlueIndex < 0 || this->values[index] > this->values[lastBlueIndex]) 
+			is_blue = backtracking(index+1, lastRedIndex, index, colorless_q);
+		
+		return min(is_red, is_blue, is_colorless);
+
+	} else {
+		this->bd_partial_solution = colorless_q;
+		return colorless_q;
+	}
+};
+
+void NumberPainter::backtracking_bounds_solve(){
+	this->colorless_values_q = backtracking_with_bounds(0,-1,-1, 0);
+};
+
+void NumberPainter::backtracking_with_bounds(int index, int lastRedIndex, int lastBlueIndex, in colorless_q){
 	if(index < this->n){
-		//cout << "index: " << index << ", lastRed: " << lastRedIndex << ", lastBlue: " << lastBlueIndex << ", colorlessValues: " << colorless_q  << endl;
+		//cout << "lastRedIndex: " << index << ", lastRed: " << lastRedIndex << ", lastBlue: " << lastBlueIndex << ", colorlessValues: " << colorless_q  << endl;
 		int is_red = this->n;
 		int is_blue = this->n;
 		int is_colorless = backtracking(index+1, lastRedIndex, lastBlueIndex, colorless_q + 1);
@@ -47,8 +72,7 @@ int NumberPainter::backtracking(int index, int lastRedIndex, int lastBlueIndex, 
 	} else {
 		return colorless_q;
 	}
-};
-
+}
 int NumberPainter::get_colorless_q(){
 	return this->colorless_values_q;
 }
