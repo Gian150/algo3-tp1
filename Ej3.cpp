@@ -1,7 +1,5 @@
 #include "numberPainter.hpp"
 
-
-
 int main(){
 
 	int  n;
@@ -14,7 +12,7 @@ int main(){
 	}
 
 	NumberPainter painter(n,values);
-	painter.paint_with(BACKTRACKING);
+	painter.paint_with(DYNAMIC);
 
 	cout << painter << endl;
 

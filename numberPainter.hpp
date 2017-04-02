@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-enum AlgorithmType {BACKTRACKING, BACKTRACKING_WITH_BOUNDS, DYNAMIC_ALGORITHM};
+enum AlgorithmType {BACKTRACKING, BACKTRACKING_WITH_BOUNDS, DYNAMIC};
 enum Color { RED, BLUE, NO_COLOR };
 
 class NumberPainter {
@@ -9,12 +9,11 @@ private:
 	int n;
 	int* values;
 	int colorless_values_q;
+	int bb_partial_solution;
 
-	int backtracking(int index, int lastRedIndex, int lastBlueIndex, int colorless_q);
-	int backtracking_bound();
+	void backtracking_solve(bool use_bounds);
+	int backtracking(int index, int lastRedIndex, int lastBlueIndex, int colorless_q, bool use_bounds);
 
-	void backtracking_solve();
-	void backtracking_bounds_solve();
 
 	int min(int a,int b,int c);
 
@@ -23,7 +22,6 @@ public:
 
 	NumberPainter(){}
 	NumberPainter(int n, int* values);
-	NumberPainter(const NumberPainter& other);
 
 	~NumberPainter();
 
