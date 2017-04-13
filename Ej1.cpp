@@ -1,4 +1,7 @@
 #include "numberPainter.hpp"
+#include <iostream>
+#include <chrono>
+using namespace std;
 
 int main(){
 
@@ -12,9 +15,9 @@ int main(){
 	}
 
 	NumberPainter painter(n,values);
-	painter.paint_with(BACKTRACKING);
 
-	cout << painter << endl;
+	painter.paint_with(BACKTRACKING);
+	cout << painter.get_colorless_q() << endl;
 
 	return 0;
 }
