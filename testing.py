@@ -2,25 +2,36 @@ import os, sys, subprocess, json
 
 bigTests = ["t20", "t16", "t17", "t15", "t4", "t18", "t19"]
 
-def correctitud():
-	backtrackingValues = {}
-	bboundValues = {}
-	dynamicValues = {}
-
+def testCorrectitud(executable, solutions):
 	for test in os.listdir("Tests"):
 		t = open("Tests/" + test, "r")
-		if (not (test in bigTests)):
-			out = subprocess.check_output(["./Ej1"], stdin=t, shell=True)
-			backtrackingValues[test] = int(out);
+		
+		if (executable == "./Ej1" or executable == "./Ej2") and (test in bigTests):
+			print(test + "... es demasiado grande para esta aplicación")
+		else:
+			print(test + "....", end="")
+			out = subprocess.check_output([executable], stdin=t, shell=True)
+			if(int(out) == solutions[test]):
+				print("OK", flush=True)
+			else:
+				print("ERROR: E:" + str(int(out))+ ", R: " + str(solutions[test]), flush=True)
 
-			out = subprocess.check_output(["./Ej2"], stdin=t, shell=True)
-			bboundValues[test] = int(out);
+		t.close()
 
-		#out = subprocess.check_output(["./Ej3"], stdin=t, shell=True)
-		#dynamicValues[test] = int(out);
+def correctitud():
+	realSolutions = json.load(open("soluciones_tests"))
 
-	realSolutions = json.load("soluciones_tests")
+	print("Checking Backtracking")
+	print("=================================")
+	testCorrectitud("./Ej1", realSolutions)
 
+	print("Checking Backtracking with bounds")
+	print("=================================")
+	testCorrectitud("./Ej2", realSolutions)
+	
+	print("Checking dynamic algorithm")
+	print("=================================")
+	testCorrectitud("./Ej3", realSolutions)
 
 def testAlgorithms():
 	correctitud()

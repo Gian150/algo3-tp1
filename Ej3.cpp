@@ -5,16 +5,16 @@ int main(){
 	int  n;
 	cin >> n;
 	
-	int values[n];
+	int values[n+1];
 
 	for(int i = 0; i < n; i++){
 		cin >> values[i];
 	}
-
+	
 	NumberPainter painter(n,values);
-	painter.paint_with(DYNAMIC);
+	int minValue = painter.paintWith(DYNAMIC);
 
-	cout << painter << endl;
+	cout << minValue << endl;
 
 	return 0;
 }

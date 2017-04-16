@@ -8,12 +8,11 @@ class NumberPainter {
 private:
 	int n;
 	int* values;
-	int colorless_values_q;
-	int bb_partial_solution;
+	int bestActualValue;
+	int** solutionsMatrix;
 
-	void backtracking_solve(bool use_bounds);
-	int backtracking(int index, int lastRedIndex, int lastBlueIndex, int colorless_q, bool use_bounds);
-
+	int backtracking(int index, int lastRedIndex, int lastBlueIndex, int colorlessNumbers, bool useBounds);
+	int dynamicAlgorithm();
 
 	int min(int a,int b,int c);
 
@@ -25,8 +24,7 @@ public:
 
 	~NumberPainter();
 
-	int get_colorless_q();
-	void paint_with(AlgorithmType a);
+	int paintWith(AlgorithmType a);
 
     friend ostream& operator<< (std::ostream& os, const NumberPainter& np);
 
