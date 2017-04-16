@@ -18,20 +18,23 @@ def testCorrectitud(executable, solutions):
 
 		t.close()
 
-def correctitud():
+def correctitud(whatToTest):
 	realSolutions = json.load(open("soluciones_tests"))
 
-	print("Checking Backtracking")
-	print("=================================")
-	testCorrectitud("./Ej1", realSolutions)
+	if(whatToTest == "b" or whatToTest == "a"):
+		print("Checking Backtracking")
+		print("=================================")
+		testCorrectitud("./Ej1", realSolutions)
 
-	print("Checking Backtracking with bounds")
-	print("=================================")
-	testCorrectitud("./Ej2", realSolutions)
+	if(whatToTest == "bb" or whatToTest == "a"):
+		print("Checking Backtracking with bounds")
+		print("=================================")
+		testCorrectitud("./Ej2", realSolutions)
 	
-	print("Checking dynamic algorithm")
-	print("=================================")
-	testCorrectitud("./Ej3", realSolutions)
+	if(whatToTest == "d" or whatToTest == "a"):
+		print("Checking dynamic algorithm")
+		print("=================================")
+		testCorrectitud("./Ej3", realSolutions)
 
 def testAlgorithms():
 	correctitud()
@@ -42,8 +45,15 @@ if __name__ == "__main__":
 	if len(sys.argv)  == 1:
 		print("Debe suministra uno o mas parametros: \n")
 		print("\t cor - Para testear correctitud")
+		print("\t\t  a (default) - de los 3 algoritmos")
+		print("\t\t  b 			 - del Backtracking")
+		print("\t\t  bb 		 - del Backtracking con podas")
+		print("\t\t  d 			 - del de programación Dinamica")
 		print("\t tim - Para testear tiempos")	
 	elif sys.argv[1] == "cor":
-		correctitud()
+		if len(sys.argv) == 3:
+			correctitud(sys.argv[2])
+		else:
+			correctitud("a")
 #	else:
 #		testearTiempos()

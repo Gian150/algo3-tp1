@@ -1,11 +1,28 @@
 #include "numberPainter.hpp"
 #include <vector>
+#include <limits>
+#include <string>
 using namespace std;
+
+void print(vector< vector< vector<int> > > matrix, int* values) {
+	for(int i = 0; i < (int) matrix.size(); i++){
+		cerr << "i = " << i << endl;
+		cerr << "\t";
+		for(int j = 0; j < (int) matrix[i].size(); j++) {
+			cerr << values[j] << "\t";
+		}
+		cerr << endl;
+		for(int j = 0; j < (int) matrix[i].size(); j++) {
+			cerr  << values[j] << "\t";
+			for(int k = 0; k < (int) matrix[i][j].size(); k++) cerr << matrix[i][j][k] << "\t";
+			cerr << endl;
+		}
+	}
+}
 
 NumberPainter::NumberPainter(int n, int* values){
 	this->n = n;
 	this->values = values;
-	
 	this->bestActualValue = n;
 };
 
@@ -49,60 +66,41 @@ int NumberPainter::backtracking(int index, int lastRedIndex, int lastBlueIndex, 
 
 };
 
-void print(vector< vector< vector<int> > > matrix, int* values) {
-	for(int i = 0; i < (int) matrix.size(); i++){
-		cerr << "i = " << i << endl;
-		cerr << "\t";
-		for(int j = 0; j < (int) matrix.size(); j++) {
-			cerr << values[j] << "\t";
-		}
-		cerr << endl;
-		for(int j = 0; j < (int) matrix.size(); j++) {
-			cerr  << values[j] << "\t";
-			for(int k = 0; k < (int) matrix.size(); k++) cerr << matrix[i][j][k] << "\t";
-			cerr << endl;
-		}
-	}
-}
-
 int NumberPainter::dynamicAlgorithm(){
-	vector< vector< vector<int> > > matrix(n, vector< vector<int> >(n, vector<int>(n, -1)));
 
-	for(int r = 0; r < n; r++) {
-		for(int a = 0; a < n; a++) {
-			if(r == a)
-				matrix[0][r][a] = n;
-			else
-				matrix[0][r][a] = n-1;
+	vector< vector< vector<int> > >matrix(n, vector< vector<int> >(n, vector<int>(n,-1)) );
+	
+	for(int r = 0; r < n; r++){
+		for(int a = 0; a < n; a++){
+			matrix[0][r][a] = n-1;
 		}
 	}
 
 	for(int i = 1; i < n; i++){
 		for(int r = 0; r < n; r++){
 			for(int a = 0; a < n; a++){
-				
-				if(r == a) matrix[i][r][a] = n;
-				else {
-					int dontPaint = matrix[i-1][r][a];
-					int paintBlue = (values[i] < values[a])? matrix[i-1][r][i] - 1: n;
-					int paintRed = (values[i] > values[r])? matrix[i-1][i][a] - 1 : n;
+				int isBlue = (values[a] > values[i])? matrix[i-1][r][i] - 1 : 2*n;
+				int isRed = (values[r] < values[i])? matrix[i-1][i][a] - 1 : 2*n;
+				int colorless = matrix[i-1][r][a];
 
-					matrix[i][r][a] = min(dontPaint, paintBlue, paintRed);
+				if(r != a){
+					matrix[i][r][a] = min(isBlue, isRed, colorless);
+				} else {
+					matrix[i][r][a] = 2*n;
 				}
-
 			}
 		}
-
 	}
 
-	int finalSolution = n;
-	for(int r = 0; r < n; r++)
-		finalSolution = (finalSolution > matrix[n-1][r][0])? matrix[n-1][r][0] : finalSolution;
+	print(matrix, values);
+	int solution = 2*n;
+	for(int r = 0; r < n; r++){
+		for(int a = 0; a < n; a++){
+			if(solution > matrix[n-1][r][a]) solution = matrix[n-1][r][a];
+		}
+	}
 
-	for(int a = 0; a < n; a++)
-		finalSolution = (finalSolution > matrix[n-1][0][a])? matrix[n-1][0][a] : finalSolution;
-
-	return finalSolution;
+	return solution;
 }
 
 int NumberPainter::min(int a,int b,int c){

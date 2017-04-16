@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+
 using namespace std;
 
 enum AlgorithmType {BACKTRACKING, BACKTRACKING_WITH_BOUNDS, DYNAMIC};
@@ -9,7 +11,6 @@ private:
 	int n;
 	int* values;
 	int bestActualValue;
-	int** solutionsMatrix;
 
 	int backtracking(int index, int lastRedIndex, int lastBlueIndex, int colorlessNumbers, bool useBounds);
 	int dynamicAlgorithm();

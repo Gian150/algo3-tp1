@@ -1,5 +1,4 @@
-/*
-#include "numberPainter.hpp"
+/*#include "numberPainter.hpp"
 #include <chrono>
 #include <stdlib.h>
 #include <vector>
@@ -51,6 +50,4 @@ int main(int argc, char const *argv[])
 		cout << ";\n";
 	}
 }
-
-
 */
