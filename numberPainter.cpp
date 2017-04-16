@@ -72,16 +72,16 @@ int NumberPainter::dynamicAlgorithm(){
 	
 	for(int r = 0; r < n; r++){
 		for(int a = 0; a < n; a++){
-			matrix[0][r][a] = n-1;
+			matrix[0][r][a] = 0;
 		}
 	}
 
 	for(int i = 1; i < n; i++){
 		for(int r = 0; r < n; r++){
 			for(int a = 0; a < n; a++){
-				int isBlue = (values[a] > values[i])? matrix[i-1][r][i] - 1 : 2*n;
-				int isRed = (values[r] < values[i])? matrix[i-1][i][a] - 1 : 2*n;
-				int colorless = matrix[i-1][r][a];
+				int isBlue = (values[a] > values[i])? matrix[i-1][r][i] : 2*n;
+				int isRed = (values[r] < values[i])? matrix[i-1][i][a] : 2*n;
+				int colorless = matrix[i-1][r][a] + 1;
 
 				if(r != a){
 					matrix[i][r][a] = min(isBlue, isRed, colorless);
@@ -92,7 +92,7 @@ int NumberPainter::dynamicAlgorithm(){
 		}
 	}
 
-	print(matrix, values);
+	//print(matrix, values);
 	int solution = 2*n;
 	for(int r = 0; r < n; r++){
 		for(int a = 0; a < n; a++){
