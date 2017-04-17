@@ -4,26 +4,35 @@
 #include <string>
 using namespace std;
 
-void print(vector< vector< vector<int> > > matrix, int* values) {
-	for(int i = 0; i < (int) matrix.size(); i++){
-		cerr << "i = " << i << endl;
-		cerr << "\t";
-		for(int j = 0; j < (int) matrix[i].size(); j++) {
-			cerr << values[j] << "\t";
+void print(int** matrix, int* values, int n) {
+	
+	cerr << "\t" << "N";
+	for(int i = 0; i < n; i++){
+		cerr << "\t" << values[i];
+	}
+	cerr << endl;
+
+	cerr << "N";
+	for(int i = 0; i < n+1; i++){
+		cerr << "\t" << matrix[0][i];
+	}
+	cerr << endl;
+
+	for(int i = 1; i < n; i++){
+		cerr << values[i-1];
+		for (int j = 0; j < n+1; j++){
+			cerr << "\t" << matrix[i][j];
 		}
 		cerr << endl;
-		for(int j = 0; j < (int) matrix[i].size(); j++) {
-			cerr  << values[j] << "\t";
-			for(int k = 0; k < (int) matrix[i][j].size(); k++) cerr << matrix[i][j][k] << "\t";
-			cerr << endl;
-		}
 	}
+	cerr << endl;
 }
 
 NumberPainter::NumberPainter(int n, int* values){
 	this->n = n;
 	this->values = values;
 	this->bestActualValue = n;
+	this->dMatrix = NULL;
 };
 
 NumberPainter::~NumberPainter(){}
@@ -68,39 +77,74 @@ int NumberPainter::backtracking(int index, int lastRedIndex, int lastBlueIndex, 
 
 int NumberPainter::dynamicAlgorithm(){
 
-	vector< vector< vector<int> > >matrix(n, vector< vector<int> >(n, vector<int>(n,-1)) );
-	
-	for(int r = 0; r < n; r++){
-		for(int a = 0; a < n; a++){
-			matrix[0][r][a] = 0;
+	dMatrix = new int*[n+1];
+	for(int r = 0; r < n+1; r++) {
+		dMatrix[r] = new int[n+1];
+		for(int a = 0; a < n+1; a++){
+			dMatrix[r][a] = -1;
 		}
 	}
 
-	for(int i = 1; i < n; i++){
-		for(int r = 0; r < n; r++){
-			for(int a = 0; a < n; a++){
-				int isBlue = (values[a] > values[i])? matrix[i-1][r][i] : 2*n;
-				int isRed = (values[r] < values[i])? matrix[i-1][i][a] : 2*n;
-				int colorless = matrix[i-1][r][a] + 1;
+/*	cerr << "===============================================================" << endl;
+	cerr << "Esto es apenas inicializamos la matriz" << endl;
+	print(dMatrix, values,n);
+*/
+	for(int r = n-1; r >= 0; r--){
+		int value = dynamicAlgorithmRecursion(r, n);
+		if(bestActualValue > value ) bestActualValue = value;
+	}
 
-				if(r != a){
-					matrix[i][r][a] = min(isBlue, isRed, colorless);
-				} else {
-					matrix[i][r][a] = 2*n;
+	for(int a = n-1; a >= 0; a--){
+		int value = dynamicAlgorithmRecursion(a, n+1);
+		if(bestActualValue > value) bestActualValue = value;
+	}
+
+/*	cerr << "===============================================================" << endl;
+	cerr << "Aca terminamos de hacer el algoritmo" << endl;
+	print(dMatrix, values,n);
+*/
+	return bestActualValue;
+
+}
+
+int NumberPainter::dynamicAlgorithmRecursion(int r, int a){
+	
+	cerr << "===============================================================" << endl;
+	cerr << r  << " " << a << endl;
+	print(dMatrix, values,n);
+
+	if(dMatrix[r][a] == -1){
+		cerr << "La matriz no está definida" << endl;
+		if (r == 0 and a == 0) {
+			cerr << "Pero es el caso base" << endl;
+			dMatrix[0][0] = n;
+			return n;
+
+		} else {
+			cerr << "Tengo que definir recursivamente el valor para estos indices" << endl;
+			int min = n;
+
+			if(r < a){
+				cerr << "El indice del ultimo rojo es menor que el indice del ultimo azul" << endl;
+				for(int i = 0; i < a; i++){
+					int actual = dynamicAlgorithmRecursion(r,i);
+					if(min > actual and values[i] < values[r-1]) min = actual;
+				}
+			} else {
+				cerr << "El indice del ultimo rojo es mayor que el indice del ultimo azul" << endl;
+				for(int i = 0; i < r; i++){
+					int actual = dynamicAlgorithmRecursion(i,a);
+					if(min > actual and values[i] > values[a-1]) min = actual;
 				}
 			}
-		}
-	}
 
-	//print(matrix, values);
-	int solution = 2*n;
-	for(int r = 0; r < n; r++){
-		for(int a = 0; a < n; a++){
-			if(solution > matrix[n-1][r][a]) solution = matrix[n-1][r][a];
+			if(bestActualValue > min) bestActualValue = min-1;
+			dMatrix[r][a] = min-1;
+			return min-1;
 		}
+	} else {
+		return dMatrix[r][a];
 	}
-
-	return solution;
 }
 
 int NumberPainter::min(int a,int b,int c){

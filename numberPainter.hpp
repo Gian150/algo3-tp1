@@ -11,9 +11,11 @@ private:
 	int n;
 	int* values;
 	int bestActualValue;
+	int** dMatrix;
 
 	int backtracking(int index, int lastRedIndex, int lastBlueIndex, int colorlessNumbers, bool useBounds);
 	int dynamicAlgorithm();
+	int dynamicAlgorithmRecursion(int r, int a);
 
 	int min(int a,int b,int c);
 
