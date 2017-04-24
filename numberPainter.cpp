@@ -4,8 +4,7 @@
 #include <string>
 using namespace std;
 
-void print(int** matrix, int* values, int n) {
-	
+void print(vector< vector<int> > *matrix, int* values, int n) {
 	cerr << "\t" << "N";
 	for(int i = 0; i < n; i++){
 		cerr << "\t" << values[i];
@@ -14,14 +13,14 @@ void print(int** matrix, int* values, int n) {
 
 	cerr << "N";
 	for(int i = 0; i < n+1; i++){
-		cerr << "\t" << matrix[0][i];
+		cerr << "\t" << (*matrix)[0][i];
 	}
 	cerr << endl;
 
-	for(int i = 1; i < n; i++){
+	for(int i = 1; i < n+1; i++){
 		cerr << values[i-1];
 		for (int j = 0; j < n+1; j++){
-			cerr << "\t" << matrix[i][j];
+			cerr << "\t" << (*matrix)[i][j];
 		}
 		cerr << endl;
 	}
@@ -76,75 +75,52 @@ int NumberPainter::backtracking(int index, int lastRedIndex, int lastBlueIndex, 
 };
 
 int NumberPainter::dynamicAlgorithm(){
-
-	dMatrix = new int*[n+1];
-	for(int r = 0; r < n+1; r++) {
-		dMatrix[r] = new int[n+1];
-		for(int a = 0; a < n+1; a++){
-			dMatrix[r][a] = -1;
-		}
-	}
-
-/*	cerr << "===============================================================" << endl;
-	cerr << "Esto es apenas inicializamos la matriz" << endl;
-	print(dMatrix, values,n);
-*/
-	for(int r = n-1; r >= 0; r--){
-		int value = dynamicAlgorithmRecursion(r, n);
-		if(bestActualValue > value ) bestActualValue = value;
-	}
-
-	for(int a = n-1; a >= 0; a--){
-		int value = dynamicAlgorithmRecursion(a, n+1);
-		if(bestActualValue > value) bestActualValue = value;
-	}
-
-/*	cerr << "===============================================================" << endl;
-	cerr << "Aca terminamos de hacer el algoritmo" << endl;
-	print(dMatrix, values,n);
-*/
-	return bestActualValue;
-
-}
-
-int NumberPainter::dynamicAlgorithmRecursion(int r, int a){
+	int bestActualValue = n;
 	
-	cerr << "===============================================================" << endl;
-	cerr << r  << " " << a << endl;
-	print(dMatrix, values,n);
+	vector< vector<int> > dMatrix = vector< vector<int> >(n+1, vector<int>(n+1, -1));
 
-	if(dMatrix[r][a] == -1){
-		cerr << "La matriz no está definida" << endl;
-		if (r == 0 and a == 0) {
-			cerr << "Pero es el caso base" << endl;
-			dMatrix[0][0] = n;
-			return n;
+	dMatrix[0][0] = n;
 
-		} else {
-			cerr << "Tengo que definir recursivamente el valor para estos indices" << endl;
-			int min = n;
 
-			if(r < a){
-				cerr << "El indice del ultimo rojo es menor que el indice del ultimo azul" << endl;
-				for(int i = 0; i < a; i++){
-					int actual = dynamicAlgorithmRecursion(r,i);
-					if(min > actual and values[i] < values[r-1]) min = actual;
+	for(int r = 0; r < n+1; r++){
+		for(int a = 0; a < n+1; a++){
+			//cerr << "r=" << r << "\ta=" << a << endl;
+			int min = n+1;
+			
+			if(a == r) 
+				dMatrix[r][a] = n;
+
+			else if(a < r) {
+				//cerr << "a < r" << endl;
+				min = dMatrix[0][a];
+
+				for(int i = 1; i < r; i++) {
+					if(min > dMatrix[i][a] and values[i-1] < values[r-1]) 
+						min = dMatrix[i][a];
 				}
+
+				dMatrix[r][a] = min - 1;
+
 			} else {
-				cerr << "El indice del ultimo rojo es mayor que el indice del ultimo azul" << endl;
-				for(int i = 0; i < r; i++){
-					int actual = dynamicAlgorithmRecursion(i,a);
-					if(min > actual and values[i] > values[a-1]) min = actual;
-				}
-			}
+				//cerr << "a > r" << endl;
+				min = dMatrix[r][0];
 
-			if(bestActualValue > min) bestActualValue = min-1;
-			dMatrix[r][a] = min-1;
-			return min-1;
+				for(int i = 1; i < a; i++) {
+					if(min > dMatrix[r][i] and values[i-1] > values[a-1])
+						min = dMatrix[r][i];
+				}
+				
+				dMatrix[r][a] = min - 1;
+			}
+			
+
+			if(bestActualValue > dMatrix[r][a]) bestActualValue = dMatrix[r][a];
+			//print(&dMatrix, values, n);
 		}
-	} else {
-		return dMatrix[r][a];
 	}
+
+
+	return bestActualValue;
 }
 
 int NumberPainter::min(int a,int b,int c){

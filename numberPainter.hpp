@@ -3,8 +3,11 @@
 
 using namespace std;
 
+#define INF numeric_limits<int>::max()
+#define MINUS_INF -INF
+
 enum AlgorithmType {BACKTRACKING, BACKTRACKING_WITH_BOUNDS, DYNAMIC};
-enum Color { RED, BLUE, NO_COLOR };
+
 
 class NumberPainter {
 private:
@@ -15,7 +18,6 @@ private:
 
 	int backtracking(int index, int lastRedIndex, int lastBlueIndex, int colorlessNumbers, bool useBounds);
 	int dynamicAlgorithm();
-	int dynamicAlgorithmRecursion(int r, int a);
 
 	int min(int a,int b,int c);
 
