@@ -2,64 +2,14 @@ import os, sys
 import subprocess as s
 import json
 import random as r
-from ipywidgets import IntProgress, HTML, VBox
-from IPython.display import display
 
-def log_progress(sequence, every=None, size=None):
+big_test = ["t20", "t16", "t17", "t15", "t4", "t18", "t19"]
 
-    is_iterator = False
-    if size is None:
-        try:
-            size = len(sequence)
-        except TypeError:
-            is_iterator = True
-    if size is not None:
-        if every is None:
-            if size <= 200:
-                every = 1
-            else:
-                every = int(size / 200)     # every 0.5%
-    else:
-        assert every is not None, 'sequence is iterator, set every'
-
-    if is_iterator:
-        progress = IntProgress(min=0, max=1, value=1)
-        progress.bar_style = 'info'
-    else:
-        progress = IntProgress(min=0, max=size, value=0)
-    label = HTML()
-    box = VBox(children=[label, progress])
-    display(box)
-
-    index = 0
-    try:
-        for index, record in enumerate(sequence, 1):
-            if index == 1 or index % every == 0:
-                if is_iterator:
-                    label.value = '{index} / ?'.format(index=index)
-                else:
-                    progress.value = index
-                    label.value = u'{index} / {size}'.format(
-                        index=index,
-                        size=size
-                    )
-            yield record
-    except:
-        progress.bar_style = 'danger'
-        raise
-    else:
-        progress.bar_style = 'success'
-        progress.value = index
-        label.value = str(index or '?')
-
-
-bigTests = ["t20", "t16", "t17", "t15", "t4", "t18", "t19"]
-
-def testCorrectitud(executable, solutions):
+def test_correctitud(executable, solutions):
 	for test in os.listdir("Tests_para_correctitud"):
-		t = open("Tests/" + test, "r")
+		t = open("Tests_para_correctitud/" + test, "r")
 		
-		if (executable == "./Ej1" or executable == "./Ej2") and (test in bigTests):
+		if (executable == "./Ej1" or executable == "./Ej2") and (test in big_test):
 			print(test + "... es demasiado grande para esta aplicación")
 		else:
 			print(test + "....", end="")
@@ -71,47 +21,66 @@ def testCorrectitud(executable, solutions):
 
 		t.close()
 
-def correctitud(whatToTest):
-	realSolutions = json.load(open("soluciones_tests"))
+def correctitud(what_to_test):
+	real_solutions = json.load(open("soluciones_tests"))
 
-	if(whatToTest == "b" or whatToTest == "a"):
+	if(what_to_test == "b" or what_to_test == "a"):
 		print("Checking Backtracking")
 		print("=================================")
-		testCorrectitud("./Ej1", realSolutions)
-
-	if(whatToTest == "bb" or whatToTest == "a"):
+		test_correctitud("./Ej1", real_solutions)
+		print("\n")
+	
+	if(what_to_test == "bb" or what_to_test == "a"):
 		print("Checking Backtracking with bounds")
 		print("=================================")
-		testCorrectitud("./Ej2", realSolutions)
-	
-	if(whatToTest == "d" or whatToTest == "a"):
+		test_correctitud("./Ej2", real_solutions)
+		print("\n")
+
+	if(what_to_test == "d" or what_to_test == "a"):
 		print("Checking dynamic algorithm")
-		progressrint("=================================")
-		testCorrectitud("./Ej3", realSolutions)
+		print("=================================")
+		test_correctitud("./Ej3", real_solutions)
 
 
-def generateRandomSamples():
+def generate_random_samples():
+	print("Creating tests files...")
 	for n in range(1, 200):
-		for repetition in log_progress(range(0, 20)):
+		for repetition in range(0, 20):
 			f = open("Tests_para_tiempos/Test_" + str(n) + "_" + str(repetition), "w")
 			f.write(str(n) + "\n")
 			for i in range(0, n):
 				f.write(str(r.randrange(-150,150)) + " ")
 			f.close()
-
-def timing(whatToTest):
-	if len(os.listdir("Tests_para_tiempos")) == 0:
-		print("Creating tests files")
-		generateRandomSamples()
 	print("Test files generated")
 
-#	if(whatToTest == "b" or whatToTest == "a")
-#		print("Running backtracking iterations")
-#		print("===============================")
+
+def test_timing(exercise):
+	for test in os.listdir("Tests_para_tiempos"):
+
+
+
+ def timing(what_to_test):
+ 	if len(os.listdir("Tests_para_tiempos")) == 0:
+ 		generate_random_samples()
+
+ 	if(what_to_test == "b" or what_to_test == "a")
+ 		print("Running backtracking iterations")
+ 		print("===============================")
+ 		test_timing("./Ej1")
+
+ 	if(what_to_test == "bb" or what_to_test == "a")
+ 		print("Running backtracking with bound iterations")
+ 		print("==========================================")
+ 		test_timing("./Ej2")
+
+ 	if(what_to_test == "d" or what_to_test == "a")
+ 		print("Running dynamic algorithm iterations")
+ 		print("====================================")
+ 		test_timing("./Ej3")
 
 if __name__ == "__main__":
-	
-	if len(sys.argv)  == 1:
+	print(sys.argv)
+	if len(sys.argv)  == 1 or sys.argv[1] == "help":
 		print("You must provide two or more parameters: \n")
 		print("\t test -To test algorithms")
 		print("\t\t  a (default) - test the three algorithms")
@@ -124,7 +93,7 @@ if __name__ == "__main__":
 		print("\t\t  bb 		 - of the Backtracking with Bounds algorithm")
 		print("\t\t  d 			 - of the dynamic algorithm")
 		
-	elif sys.argv[1] == "test":
+	elif sys.argv[1] == "cor":
 		if len(sys.argv) == 3:
 			correctitud(sys.argv[2])
 		else:

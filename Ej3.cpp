@@ -12,9 +12,9 @@ int main(){
 	}
 	
 	NumberPainter painter(n,values);
-	int minValue = painter.paintWith(DYNAMIC);
+	int min_value = painter.paint_with(DYNAMIC);
 
-	cout << minValue << endl;
+	cout << min_value << endl;
 
 	return 0;
 }

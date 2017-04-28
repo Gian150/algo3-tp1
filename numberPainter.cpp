@@ -5,7 +5,6 @@
 using namespace std;
 
 void print(vector< vector<int> > *matrix, int* values, int n) {
-	cerr << "\t" << "N";
 	for(int i = 0; i < n; i++){
 		cerr << "\t" << values[i];
 	}
@@ -30,14 +29,14 @@ void print(vector< vector<int> > *matrix, int* values, int n) {
 NumberPainter::NumberPainter(int n, int* values){
 	this->n = n;
 	this->values = values;
-	this->bestActualValue = n;
-	this->dMatrix = NULL;
+	this->best_actual_value = n;
+	this->d_matrix = NULL;
 };
 
 NumberPainter::~NumberPainter(){}
 
-int NumberPainter::paintWith(AlgorithmType a){
-	bestActualValue = n;
+int NumberPainter::paint_with(AlgorithmType a){
+	best_actual_value = n;
 	
 	if(a == BACKTRACKING){
 		return backtracking(0,-1,-1,0,false);
@@ -45,41 +44,41 @@ int NumberPainter::paintWith(AlgorithmType a){
 		return backtracking(0,-1,-1,0,true);
 	}
 
-	return dynamicAlgorithm();
+	return dynamic_algorithm();
 }
 
-int NumberPainter::backtracking(int index, int lastRedIndex, int lastBlueIndex, int partialSolution, bool useBounds){
+int NumberPainter::backtracking(int index, int last_red_index, int last_blue_index, int partial_solution, bool use_bounds){
 
-	if(useBounds && bestActualValue <= partialSolution) {
-		return bestActualValue;
+	if(use_bounds && best_actual_value <= partial_solution) {
+		return best_actual_value;
 	}
 	if(index < n){
-		int isBlue = n;
-		if(lastBlueIndex < 0 || values[index] < values[lastBlueIndex]) {
-			isBlue = backtracking(index+1, lastRedIndex, index, partialSolution, useBounds);
+		int is_blue = n;
+		if(last_blue_index < 0 || values[index] < values[last_blue_index]) {
+			is_blue = backtracking(index+1, last_red_index, index, partial_solution, use_bounds);
 		}
 
-		int isRed = n;
-		if(lastRedIndex < 0 || values[index] > values[lastRedIndex]) {
-			isRed = backtracking(index+1, index, lastBlueIndex, partialSolution, useBounds);
+		int is_red = n;
+		if(last_red_index < 0 || values[index] > values[last_red_index]) {
+			is_red = backtracking(index+1, index, last_blue_index, partial_solution, use_bounds);
 		}
 
-		int isColorless = backtracking(index+1, lastRedIndex, lastBlueIndex, partialSolution + 1, useBounds);
-		return min(isRed, isBlue, isColorless);
+		int is_colorless = backtracking(index+1, last_red_index, last_blue_index, partial_solution + 1, use_bounds);
+		return min(is_red, is_blue, is_colorless);
 
 	} else {
-		bestActualValue = partialSolution;
-		return partialSolution;
+		best_actual_value = partial_solution;
+		return partial_solution;
 	}
 
 };
 
-int NumberPainter::dynamicAlgorithm(){
-	int bestActualValue = n;
+int NumberPainter::dynamic_algorithm(){
+	int best_actual_value = n;
 	
-	vector< vector<int> > dMatrix = vector< vector<int> >(n+1, vector<int>(n+1, -1));
+	vector< vector<int> > d_matrix = vector< vector<int> >(n+1, vector<int>(n+1, -1));
 
-	dMatrix[0][0] = n;
+	d_matrix[0][0] = n;
 
 
 	for(int r = 0; r < n+1; r++){
@@ -88,39 +87,39 @@ int NumberPainter::dynamicAlgorithm(){
 			int min = n+1;
 			
 			if(a == r) 
-				dMatrix[r][a] = n;
+				d_matrix[r][a] = n;
 
 			else if(a < r) {
 				//cerr << "a < r" << endl;
-				min = dMatrix[0][a];
+				min = d_matrix[0][a];
 
 				for(int i = 1; i < r; i++) {
-					if(min > dMatrix[i][a] and values[i-1] < values[r-1]) 
-						min = dMatrix[i][a];
+					if(min > d_matrix[i][a] and values[i-1] < values[r-1]) 
+						min = d_matrix[i][a];
 				}
 
-				dMatrix[r][a] = min - 1;
+				d_matrix[r][a] = min - 1;
 
 			} else {
 				//cerr << "a > r" << endl;
-				min = dMatrix[r][0];
+				min = d_matrix[r][0];
 
 				for(int i = 1; i < a; i++) {
-					if(min > dMatrix[r][i] and values[i-1] > values[a-1])
-						min = dMatrix[r][i];
+					if(min > d_matrix[r][i] and values[i-1] > values[a-1])
+						min = d_matrix[r][i];
 				}
 				
-				dMatrix[r][a] = min - 1;
+				d_matrix[r][a] = min - 1;
 			}
 			
 
-			if(bestActualValue > dMatrix[r][a]) bestActualValue = dMatrix[r][a];
-			//print(&dMatrix, values, n);
+			if(best_actual_value > d_matrix[r][a]) best_actual_value = d_matrix[r][a];
+			//print(&d_matrix, values, n);
 		}
 	}
 
 
-	return bestActualValue;
+	return best_actual_value;
 }
 
 int NumberPainter::min(int a,int b,int c){
@@ -129,14 +128,14 @@ int NumberPainter::min(int a,int b,int c){
 };
 
 std::ostream& operator<< (std::ostream& os, const NumberPainter& np) {
-	os << "======== NumberPainter ========" << endl;
+	os << "======== Number Painter =======" << endl;
 	os << "=         Quantity: "  << np.n << endl;
 	os << "=           Values: ";
 
 	for(int i = 0; i < np.n; i++) os << np.values[i] << " ";
 	os << endl;
 
-	os << "= Colorless Values: " << np.bestActualValue << endl; 
+	os << "= Colorless Values: " << np.best_actual_value << endl; 
 	os << "===============================";
 
 	return os;

@@ -13,11 +13,11 @@ class NumberPainter {
 private:
 	int n;
 	int* values;
-	int bestActualValue;
-	int** dMatrix;
+	int best_actual_value;
+	int** d_matrix;
 
-	int backtracking(int index, int lastRedIndex, int lastBlueIndex, int colorlessNumbers, bool useBounds);
-	int dynamicAlgorithm();
+	int backtracking(int index, int last_red_index, int last_blue_index, int colorless_numbers, bool use_bounds);
+	int dynamic_algorithm();
 
 	int min(int a,int b,int c);
 
@@ -29,7 +29,7 @@ public:
 
 	~NumberPainter();
 
-	int paintWith(AlgorithmType a);
+	int paint_with(AlgorithmType a);
 
     friend ostream& operator<< (std::ostream& os, const NumberPainter& np);
 

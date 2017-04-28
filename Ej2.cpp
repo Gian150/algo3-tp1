@@ -12,9 +12,9 @@ int main(){
 	}
 
 	NumberPainter painter(n,values);
-	int minValue = painter.paintWith(BACKTRACKING_WITH_BOUNDS);
+	int min_Value = painter.paint_with(BACKTRACKING_WITH_BOUNDS);
 
-	cout << minValue << endl;
+	cout << min_Value << endl;
 
 	return 0;
 }

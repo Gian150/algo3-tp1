@@ -15,8 +15,8 @@ int main(){
 
 	NumberPainter painter(n,values);
 
-	int minValue = painter.paintWith(BACKTRACKING);
-	cout << minValue << endl;
+	int min_value = painter.paint_with(BACKTRACKING);
+	cout << min_value << endl;
 
 	return 0;
 }
