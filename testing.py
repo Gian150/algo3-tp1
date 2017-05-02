@@ -1,3 +1,4 @@
+from subprocess import Popen, PIPE, STDOUT
 import os, sys
 import subprocess as s
 import json
@@ -6,8 +7,8 @@ import random as r
 big_test = ["t20", "t16", "t17", "t15", "t4", "t18", "t19"]
 
 def test_correctitud(executable, solutions):
-	for test in os.listdir("Tests_para_correctitud"):
-		t = open("Tests_para_correctitud/" + test, "r")
+	for test in os.listdir("tests"):
+		t = open("tests/" + test, "r")
 		
 		if (executable == "./Ej1" or executable == "./Ej2") and (test in big_test):
 			print(test + "... es demasiado grande para esta aplicación")
@@ -42,46 +43,46 @@ def correctitud(what_to_test):
 		test_correctitud("./Ej3", real_solutions)
 
 
-def generate_random_samples(max_q):
-	print("Creating random cases files...")
-	for n in range(1, max_q):
-		for repetition in range(0, 20):
-			f = open("Random_cases/Test_" + str(n) + "_" + str(repetition), "w")
-			f.write(str(n) + "\n")
-			for i in range(0, n):
-				f.write(str(r.randrange(-150,150)) + " ")
-			f.close()
-	print("Random cases files generated")
+def generate_random_sample(length, sequenceType):
+	f = open("random_sample", "w")
+	f.write(str(length) + "\n")
 
+	sample = r.sample(range(-150,150), length)
 
-def test_timing(exercise, repetition, max_length):
-	csvData = open("experimentsData", "r")
-	csvData.write("Length,Number, Mean, SD, Max, Min")
-	for test in os.listdir("Random_cases"):
-		name = test.split("_")
-		if(name[1] == max_length) break;
+	if sequenceType == "crecent":
+		sample.sort()
+	elif sequenceType == "decrecent": 
+		sample.sort(reverse=True)
+	elif sequenceType == "same":
+		sample = [r.randrange(-150,150)]*length;
+	for e in sample:
+		f.write(str(e) + " ")
+	
+	f.close()
 
-		f = open("Random_cases/" + test, "r")
-		out = s.check_output(["./tiempos", repetition, exercise], stdin=f, shell=True)
+def timing(algorithm, sample_type, max_length):
+	print("Measuring algorithms execution time for random sequences")
+	print("========================================================")
+	csvData = open("experiment_" + sample_type + "_" + algorithm + "_data", "w")
+	csvData.write("Length,Number, Mean\n")
+	for l in range(1, max_length):
+		for r in range(0,20):
+			generate_random_sample(l, "random")
+			print("sample_" + str(l) + "_" + str(r) + " measuring ... ", end="")		
+			
+			sample = open("random_sample", "r")
+			out = s.check_output(["./tiempos 20 decode"], stdin=sample, shell=True)
+			# if l < 44:
+			# 	sample.seek(0)
+			# 	outB = s.check_output(["./tiempos 20 bb "], stdin=sample, shell=True)
 
-def timing(what_to_test):
- 	if len(os.listdir("Tests_para_tiempos")) == 0:
- 		generate_random_samples()
-
- 	if(what_to_test == "b" or what_to_test == "a"):
- 		print("Running backtracking iterations")
- 		print("===============================")
- 		test_timing("b", 20, 60)
-
- 	if(what_to_test == "bb" or what_to_test == "a"):
- 		print("Running backtracking with bound iterations")
- 		print("==========================================")
- 		test_timing("bb", 20, 60)
-
- 	if(what_to_test == "d" or what_to_test == "a"):
- 		print("Running dynamic algorithm iterations")
- 		print("====================================")
- 		test_timing("d", 20, 200)
+			# 	sample.seek(0)
+			# 	outBB = s.check_output(["./tiempos 20 b "], stdin=sample, shell=True)
+			
+			sample.close()
+			csvData.write(str(l) +","+ str(r) + "," + out.decode() + "\n")
+			print("done", flush=True)
+	csvData.close()
 
 if __name__ == "__main__":
 	print(sys.argv)
@@ -104,9 +105,18 @@ if __name__ == "__main__":
 		else:
 			correctitud("a")
 	elif sys.argv[1] == "tim":
-		if len(sys.argv) == 3:
-			timing(sys.argv[2])
-		else:
-			timing("a")
-	elif sys.argv[1] == "gen":
-			generate_random_samples(200)
+			#timing("d", "random", 200)
+			#timing("d", "crecent", 200)
+			#timing("d", "decrecent", 200)
+			#timing("d", "same", 200)
+			timing("b", "random",40)
+			timing("b", "crecent",40)
+			timing("b", "decrecent",40)
+			timing("b", "same",40)
+			#timing("bb", "random",40)
+			#timing("bb", "crecent",40)
+			#timing("bb", "decrecent",40)
+			#timing("bb", "same",40)
+
+	elif sys.argv[1] == "tim2":
+		timing_up_to_200()

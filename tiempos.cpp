@@ -4,6 +4,7 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <math.h> 
 using namespace std;
 
 
@@ -18,19 +19,19 @@ int main(int argc, char const *argv[])
 {
 	// interpretamos los parametros
 	int rep = atoi(argv[1]);
-	int choosen_algorithm = (argv[2][0] == 'b')? BACKTRACKING : (argv[2] == "bp")?  BACKTRACKING_WITH_BOUNDS : DYNAMIC;
+	AlgorithmType choosen_algorithm = (argv[2][0] == 'b')? BACKTRACKING : (argv[2][0] == 'p')?  BACKTRACKING_WITH_BOUNDS : DYNAMIC;
 
 	// Leemos el standar input
 	int  n;
-	int values[n];
 	cin >> n;
+	int values[n];
 
 	for(int i = 0; i < n; i++){
 		cin >> values[i];
 	}
 
-	reloj times[rep];
-
+	long int times[rep];
+ 
 	for(int i = 0; i < rep; i++){
 		NumberPainter painter(n,values);
 		reloj start = ya();
@@ -40,18 +41,15 @@ int main(int argc, char const *argv[])
 	}
 
 	float mean = 0;
-	float sd = 0;
-	float max = times[0];
-	float min = times[0];
-
 	for(int i = 0; i < rep; i++){
-		if(max >)
-		mean += times[i]
+		mean += times[i];
 	}
 
-	mean /= n;
+	mean = mean/n;
 
+	cout << mean/1000000;
 
+	return 0;
 
 }
 

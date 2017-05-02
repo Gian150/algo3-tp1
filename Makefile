@@ -1,15 +1,16 @@
 CC=g++
 # Hey!, I am comment number 2. I want to say that CFLAGS will be the
 # options I'll pass to the compiler.
-OFLAGS=-c -g -ggdb -Wall -std=c++11
+OFLAGS= -g -ggdb -Wall -std=c++11 
 CFLAGS=-g -ggdb -Wall -std=c++11
 
 SOURCESE1=numberPainter.o Ej1.o
 SOURCESE2=numberPainter.o Ej2.o 
 SOURCESE3=numberPainter.o Ej3.o
-SOURCESTIEMPOS=numberPainter.o tiempos.o
+SOURCESTIEMPOS=numberPainter.o tiempos.cpp
 
 tp:
+	make clean
 	make ej1
 	make ej2
 	make ej3
@@ -24,8 +25,8 @@ ej2: $(SOURCESE2)
 ej3: $(SOURCESE3)
 	$(CC) $(CFLAGS) $(SOURCESE3) -o Ej3
 	
-tiempos: $(SOURCETIEMPOS)
-	$(CC) $(CFLAGS) $(SOURCESE3) -o tiempos
+tiempos: $(SOURCESTIEMPOS)
+	$(CC) $(CFLAGS) $(SOURCESTIEMPOS) -o tiempos
 
 *.o: *.cpp *.hpp
 	$(CC) $(OFLAGS) *.cpp
